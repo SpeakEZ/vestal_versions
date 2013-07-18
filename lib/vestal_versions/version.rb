@@ -9,6 +9,7 @@ module VestalVersions
 
     # Associate polymorphically with the parent record.
     belongs_to :versioned, :polymorphic => true
+    attr_accessible :modifications, :number, :user
 
     # ActiveRecord::Base#changes is an existing method, so before serializing the +changes+ column,
     # the existing +changes+ method is undefined. The overridden +changes+ method pertained to
@@ -32,7 +33,7 @@ module VestalVersions
     def initial?
       number == 1
     end
-    
+
     # Returns the original version number that this version was.
     def original_number
       if reverted_from.nil?
@@ -45,15 +46,15 @@ module VestalVersions
 
     def restore!
       model = restore
-      
+
       if model
         model.save!
         destroy
       end
-      
+
       model
     end
-    
+
     def restore
       if tag == 'deleted'
         attrs = modifications
